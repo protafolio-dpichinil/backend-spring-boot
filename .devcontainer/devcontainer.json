@@ -1,0 +1,45 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/alpine
+{
+	"name": "Java 17 & Spring Boot",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	// Usamos una imagen pre-configurada para Java 17. Incluye Maven y otras herramientas.
+	"image": "mcr.microsoft.com/devcontainers/java:1-17-bullseye",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// Reenviamos el puerto 8080 para poder acceder a la aplicación Spring Boot desde el host.
+	"forwardPorts": [
+		8080
+	],
+
+	// Montajes adicionales: montar una ruta del host dentro del contenedor
+	"mounts": [
+		"source=/home/dpichinil/workspace/files,target=/workspaces/files,type=bind,consistency=cached"
+	],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// Este comando se ejecuta una sola vez, después de que el contenedor se ha creado.
+	// Descarga las dependencias de Maven y compila el proyecto para que esté listo para usarse.
+	"postCreateCommand": "./mvnw install -DskipTests",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configura las propiedades específicas de VS Code.
+		"vscode": {
+			// Añade IDs de extensiones aquí. Se instalarán y activarán automáticamente en el dev container.
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"vmware.vscode-spring-boot",
+				"redhat.java",
+				"Google.gemini-code-assist",
+				"vmware.vscode-boot-dev-pack"
+			]
+		}
+	},
+	//./mvnw spring-boot:run
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	"remoteUser": "vscode"
+}
