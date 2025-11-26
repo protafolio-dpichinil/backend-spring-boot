@@ -21,15 +21,28 @@
 		8080
 	],
 
-	// Montajes adicionales: montar una ruta del host dentro del contenedor
-	"mounts": [
-		"source=/home/dpichinil/workspace/files,target=/workspaces/files,type=bind,consistency=cached"
-	],
+	// Montajes adicionales: montar una ruta del host dentro del contenedor (ver más abajo para ssh-agent)
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// Este comando se ejecuta una sola vez, después de que el contenedor se ha creado.
 	// Descarga las dependencias de Maven y compila el proyecto para que esté listo para usarse.
-	"postCreateCommand": "./mvnw install -DskipTests",
+	// Ensure ~/.ssh exists + safe permissions before/after mounts and still run the maven install
+	"postCreateCommand": "mkdir -p ~/.ssh && chmod 700 ~/.ssh && ./mvnw install -DskipTests",
+
+	// If you prefer to forward the host ssh-agent socket into the container (recommended),
+	// mount the socket into the container and set SSH_AUTH_SOCK accordingly.
+	// Make sure your host has an ssh-agent running and your key is loaded (ssh-add -l).
+	"mounts": [
+		"source=/home/dpichinil/workspace/files,target=/workspaces/files,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/.ssh/known_hosts,target=/home/vscode/.ssh/known_hosts,type=bind,consistency=cached",
+		"source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind,consistency=cached"
+	],
+
+	// Make the container point to the mounted ssh-agent socket
+	"containerEnv": {
+		"SSH_AUTH_SOCK": "/ssh-agent"
+	},
 
 	// Configure tool-specific properties.
 	"customizations": {
