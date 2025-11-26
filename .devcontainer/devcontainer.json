@@ -1,13 +1,19 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/alpine
 {
-	"name": "Java 17 & Spring Boot",
+	"name": "Java 21 (Temurin 21.0.9) & Spring Boot",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	// Usamos una imagen pre-configurada para Java 17. Incluye Maven y otras herramientas.
-	"image": "mcr.microsoft.com/devcontainers/java:1-17-bullseye",
+	"image": "mcr.microsoft.com/devcontainers/java:1-21-bullseye",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
+	// We ensure Temurin 21 (21.0.9) will be available in the container; the base image above
+	// already contains Java 21 but some setups prefer the features approach where you can
+	// explicitly request a vendor/version via the `ghcr.io/devcontainers/features/java` feature.
+	// Example (optional):
+	// "features": {
+	//   "ghcr.io/devcontainers/features/java:1": { "version": "21.0.9", "type": "temurin" }
+	// },
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// Reenviamos el puerto 8080 para poder acceder a la aplicación Spring Boot desde el host.
@@ -36,7 +42,8 @@
 				"redhat.java",
 				"Google.gemini-code-assist",
 				"vmware.vscode-boot-dev-pack",
-				"github.copilot-chat"
+				"github.copilot-chat",
+				"vscjava.vscode-java-test"
 			]
 		}
 	},

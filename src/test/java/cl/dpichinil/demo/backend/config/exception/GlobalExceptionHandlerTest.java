@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,6 +51,16 @@ class GlobalExceptionHandlerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(false))
                 .andExpect(jsonPath("$.message").value("resource not found"));
+    }
+
+    @Test
+    void whenCustomException_expectMethodNotAllowed() throws Exception {
+        mockMvc.perform(post("/test-exception/custom"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.instance").value("/test-exception/custom"))
+                .andExpect(jsonPath("$.detail").value("Method 'POST' is not supported."))
+                .andExpect(jsonPath("$.status").value(405))
+                .andExpect(jsonPath("$.title").value("Method Not Allowed"));
     }
 
     @Test

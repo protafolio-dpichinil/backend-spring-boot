@@ -27,7 +27,7 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
 	</properties>
 	<dependencies>
 		<!-- Add Spring Data JPA to provide jakarta.persistence and JPA support -->
@@ -66,6 +66,17 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Ensure JUnit 5 is present on the build/test classpath (some IDEs need an explicit dependency) -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		  <groupId>org.junit.jupiter</groupId>
+		  <artifactId>junit-jupiter-engine</artifactId>
+		  <scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -73,15 +84,20 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
 				<configuration>
+					<!-- compile with Java 21 -->
+					<release>${java.version}</release>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+							<version>1.18.30</version>
 						</path>
 						<path>
 							<groupId>org.springframework.boot</groupId>
 							<artifactId>spring-boot-configuration-processor</artifactId>
+							<version>4.0.0</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
@@ -97,6 +113,54 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+			  <groupId>org.jacoco</groupId>
+			  <artifactId>jacoco-maven-plugin</artifactId>
+			  <version>0.8.10</version>
+			  <executions>
+				<!-- adjunta el agente en la fase 'test' -->
+				<execution>
+				  <goals>
+					<goal>prepare-agent</goal>
+				  </goals>
+				</execution>
+			
+				<!-- genera el informe tras los tests -->
+				<execution>
+				  <id>report</id>
+				  <phase>test</phase>
+				  <goals>
+					<goal>report</goal>
+				  </goals>
+				  <configuration>
+					<outputDirectory>${project.basedir}/target/site/jacoco</outputDirectory>
+				  </configuration>
+				</execution>
+			
+				<!-- (opcional) falla build si la cobertura es menor al umbral -->
+				<execution>
+				  <id>check</id>
+				  <phase>verify</phase>
+				  <goals>
+					<goal>check</goal>
+				  </goals>
+				  <configuration>
+					<rules>
+					  <rule>
+						<element>BUNDLE</element>
+						<limits>
+						  <limit>
+							<counter>INSTRUCTION</counter>
+							<value>COVEREDRATIO</value>
+							<minimum>0.60</minimum> <!-- 60% mínimo -->
+						  </limit>
+						</limits>
+					  </rule>
+					</rules>
+				  </configuration>
+				</execution>
+			  </executions>
 			</plugin>
 		</plugins>
 	</build>
