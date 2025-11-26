@@ -1,0 +1,69 @@
+{
+	"info": {
+		"_postman_id": "21a9a25c-39de-47b4-8a1a-b65fa8be6857",
+		"name": "backend-spring-boot",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6126860",
+		"_collection_link": "https://dpichinilsared.postman.co/workspace/portafolio~18608cbc-2f7b-4d23-a44e-2f59626f6a97/collection/6126860-21a9a25c-39de-47b4-8a1a-b65fa8be6857?action=share&source=collection_link&creator=6126860"
+	},
+	"item": [
+		{
+			"name": "create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"dpichinil2\",\n    \"password\":\"123456\",\n    \"active\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/users/",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get/{id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/users/:id",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"users",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
