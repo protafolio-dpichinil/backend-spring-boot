@@ -35,7 +35,8 @@
 				"vmware.vscode-spring-boot",
 				"redhat.java",
 				"Google.gemini-code-assist",
-				"vmware.vscode-boot-dev-pack"
+				"vmware.vscode-boot-dev-pack",
+				"github.copilot-chat"
 			]
 		}
 	},
