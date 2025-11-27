@@ -43,6 +43,11 @@ public class UserController {
         return userService.getById(id);
     }
 
+    @GetMapping("/username/{username}")
+    public ResponseEntity<ResponseDto> getByUsername(@PathVariable String username) {
+        return userService.getByUsername(username);
+    }
+
     @PostMapping("/")
     public ResponseEntity<ResponseDto> save(@RequestBody UserDto userDto) {
         return userService.save(userDto);
@@ -56,6 +61,11 @@ public class UserController {
     @PatchMapping("/{id}/password")
     public ResponseEntity<ResponseDto> resetPassword(@PathVariable Integer id, @RequestBody UserDto userDto) {
         return userService.resetPassword(id, userDto);
+    }
+
+    @PutMapping("/reset/")
+    public ResponseEntity<String> resetPassword(@RequestBody UserDto userDto) {
+        return userService.resetPassword(userDto);
     }
 
     @DeleteMapping("/{id}")

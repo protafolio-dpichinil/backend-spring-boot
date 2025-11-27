@@ -57,4 +57,18 @@ public interface UserService {
      */
     ResponseEntity<ResponseDto> resetPassword(Integer id, UserDto userDto);
 
+    /**
+     * Get user by username.
+     * @param username
+     * @return
+     */
+    ResponseEntity<ResponseDto> getByUsername(String username);
+
+    /**
+     * Reset password by username.
+     * @param userDto
+     * @return
+     */
+    ResponseEntity<String> resetPassword(UserDto userDto);
+
 }

@@ -2,11 +2,13 @@ package cl.dpichinil.demo.backend.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import cl.dpichinil.demo.backend.config.exception.CustomException;
@@ -21,9 +23,11 @@ import cl.dpichinil.demo.backend.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -39,6 +43,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<ResponseDto> getById(Integer id) {
         Optional<UserEntity> op = userRepository.findById(id);
+        validateNonEmptyOptional(op);
+        UserEntity userEntity = op.get();
+        UserDto userDto = UserMapper.toDto(userEntity);
+        return ResponseEntity.ok(new ResponseDto(true, "User found", userDto));
+    }
+
+    @Override
+    public ResponseEntity<ResponseDto> getByUsername(String username) {
+        validateNonEmptyUsername(username);
+        Optional<UserEntity> op = userRepository.findByUsername(username);
         validateNonEmptyOptional(op);
         UserEntity userEntity = op.get();
         UserDto userDto = UserMapper.toDto(userEntity);
@@ -123,13 +137,17 @@ public class UserServiceImpl implements UserService {
         if(userDto == null) {
             throw new CustomException(HttpStatus.BAD_REQUEST, "Invalid user data");
         }
-        if(userDto.getUsername() == null || userDto.getUsername().isEmpty()) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "Username is required");
-        }
         if(userDto.getActive() == null) {
             throw new CustomException(HttpStatus.BAD_REQUEST, "Active status is required");
         }
         validateNonEmptyPassword(userDto.getPassword());
+        validateNonEmptyUsername(userDto.getUsername());
+    }
+
+    private void validateNonEmptyUsername(String username) {
+        if(username == null || username.isEmpty()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Username is required");
+        }
     }
 
     private void validateUpdateFields(Integer id, UserDto userDto) {
@@ -144,4 +162,24 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(HttpStatus.NOT_FOUND, "No users found");
         }
     }
+
+    @Override
+    public ResponseEntity<String> resetPassword(UserDto userDto) {
+        validateNonEmptyUsername(userDto.getUsername());
+        Optional<UserEntity> op = userRepository.findByUsername(userDto.getUsername());
+        validateNonEmptyOptional(op);
+        UserEntity user = op.get();
+
+        String newPassword = UUID.randomUUID().toString().substring(0, 8);
+        String encryptedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encryptedPassword);
+        userRepository.save(user);
+
+        System.out.println("Password generada para '" + user.getUsername() + "': " + newPassword);
+        System.out.println("Password encriptada: " + encryptedPassword);
+
+        return ResponseEntity.ok("Password para el usuario '" + user.getUsername() + "' ha sido reseteada y la información impresa en consola.");
+    }
+
+    
 }
