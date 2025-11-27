@@ -1,5 +1,5 @@
--- password "e07eb904"
-INSERT INTO users (usr_username, usr_password, usr_active) VALUES ('admin', '$2a$10$8ylAwOXjR6AuVeJQzyPQNuTtNvQaiec8EC9wj0vjcyluE2sXSjhK6', TRUE);
+-- password "40a77ce9"
+INSERT INTO users (usr_username, usr_password, usr_active) VALUES ('admin', '$2a$10$wQLUvPYmGPBhFZON8xLTfuJTVqfOQbHvI.ZnwuxQ2qmudmRmw9oMy', TRUE);
 
 -- password "6f10797b"
 INSERT INTO users (usr_username, usr_password, usr_active) VALUES ('user1', '$2a$10$.Pe21lgMGZGu5GIg/kGCX.9aAehLCiUdQGHA76OQa6Ntlex6j/uUe', TRUE);

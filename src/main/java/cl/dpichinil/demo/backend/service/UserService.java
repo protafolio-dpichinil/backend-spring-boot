@@ -69,6 +69,13 @@ public interface UserService {
      * @param userDto
      * @return
      */
-    ResponseEntity<String> resetPassword(UserDto userDto);
+    ResponseEntity<ResponseDto> resetPassword(UserDto userDto);
+
+    /**
+     * User login.
+     * @param userDto
+     * @return
+     */
+    ResponseEntity<ResponseDto> login(UserDto userDto);
 
 }

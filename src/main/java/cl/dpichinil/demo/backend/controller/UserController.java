@@ -64,7 +64,7 @@ public class UserController {
     }
 
     @PutMapping("/reset/")
-    public ResponseEntity<String> resetPassword(@RequestBody UserDto userDto) {
+    public ResponseEntity<ResponseDto> resetPassword(@RequestBody UserDto userDto) {
         return userService.resetPassword(userDto);
     }
 

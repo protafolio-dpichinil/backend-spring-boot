@@ -1,6 +1,7 @@
 package cl.dpichinil.demo.backend.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -8,10 +9,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import cl.dpichinil.demo.backend.config.exception.CustomException;
+import cl.dpichinil.demo.backend.config.security.JwtProvider;
+import cl.dpichinil.demo.backend.dto.JWTAuthDto;
 import cl.dpichinil.demo.backend.dto.ResponseDto;
 import cl.dpichinil.demo.backend.dto.ResponsePageDto;
 import cl.dpichinil.demo.backend.dto.UserDto;
@@ -19,15 +23,23 @@ import cl.dpichinil.demo.backend.entity.UserEntity;
 import cl.dpichinil.demo.backend.mapper.UserMapper;
 import cl.dpichinil.demo.backend.repository.UserRepository;
 import cl.dpichinil.demo.backend.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(
+            UserRepository userRepository, 
+            PasswordEncoder passwordEncoder,
+            JwtProvider jwtProvider
+        ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtProvider = jwtProvider;
     }
 
     @Override
@@ -85,6 +97,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<ResponseDto> save(UserDto userDto) {
         validateNotEmptyUserDto(userDto);
         UserEntity userEntity = UserMapper.toEntity(userDto);
+        userEntity.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userRepository.save(userEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(true, "user created successfully", userEntity.getId()));
     }
@@ -164,7 +177,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<String> resetPassword(UserDto userDto) {
+    public ResponseEntity<ResponseDto> resetPassword(UserDto userDto) {
         validateNonEmptyUsername(userDto.getUsername());
         Optional<UserEntity> op = userRepository.findByUsername(userDto.getUsername());
         validateNonEmptyOptional(op);
@@ -175,10 +188,49 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encryptedPassword);
         userRepository.save(user);
 
-        System.out.println("Password generada para '" + user.getUsername() + "': " + newPassword);
-        System.out.println("Password encriptada: " + encryptedPassword);
+        log.info("Password generada para '{}': {}", user.getUsername(), newPassword);
+        log.info("Password encriptada: {}", encryptedPassword);
+        ResponseDto responseDto = new ResponseDto(true, "Password para el usuario '" + user.getUsername() + "' ha sido reseteada y la información impresa en consola.");
+        return ResponseEntity.ok(responseDto);
+    }
 
-        return ResponseEntity.ok("Password para el usuario '" + user.getUsername() + "' ha sido reseteada y la información impresa en consola.");
+    @Override
+    public ResponseEntity<ResponseDto> login(UserDto userDto) {
+        String username = userDto.getUsername();
+        String password = userDto.getPassword();
+
+       if(username == null || password == null){
+            log.error("Authentication failed: username or password is null");
+            throw  new BadCredentialsException("Invalid username or password");
+        }
+        if(username.isEmpty() || password.isEmpty()){
+            log.error("Authentication failed: username or password is empty");
+            throw  new BadCredentialsException("Invalid username or password");
+        }
+        if(username.isBlank() || password.isBlank()){
+            log.error("Authentication failed: username or password is blank");
+            throw  new BadCredentialsException("Invalid username or password");
+        }
+        Optional<UserEntity> op = userRepository.findByUsername(username);
+        if(op.isEmpty()){
+            log.error("Authentication failed for username: {} User not Found", username);
+            throw new BadCredentialsException("Invalid username or password");
+        }
+        UserEntity entity = op.get();
+        if (entity.getActive() == null || !entity.getActive()) {
+            log.error("Authentication failed for username: {} User is in status inactive", username);
+            throw new BadCredentialsException("User is inactive");
+        }
+
+        if (!passwordEncoder.matches(password, entity.getPassword())) {
+            log.error("Authentication failed for username: {} password matches failed", username);
+            throw new BadCredentialsException("Invalid username or password");
+        }
+
+        Map<String, Object> extraClaims = Map.of(); // Puedes agregar claims adicionales si es necesario
+        String token = jwtProvider.generateToken(extraClaims, userDto.getUsername());
+        JWTAuthDto jwtAuthDto = new JWTAuthDto(token);
+        return ResponseEntity.ok(new ResponseDto(true, "Login successful", jwtAuthDto));
     }
 
     

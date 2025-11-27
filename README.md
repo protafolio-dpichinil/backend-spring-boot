@@ -1,49 +1,61 @@
 # backend-spring-boot
 
-This repository has been updated to target Java 21 (LTS). The dev container has also been updated to a Java 21 image
-(Temurin 21.0.9) so the VS Code Remote - Containers experience uses the correct runtime.
+Este es un proyecto backend desarrollado con Spring Boot y Java 21, diseñado para demostrar mis conocimientos y experiencia en el desarrollo de aplicaciones Java modernas.
 
-If you are using the dev container, rebuild it after pulling the latest changes so the new image is used:
+El objetivo principal es aplicar y exhibir buenas prácticas en la construcción de APIs RESTful, incluyendo:
+*   **API REST:** Creación de endpoints para la gestión de recursos.
+*   **Seguridad:** Implementación de autenticación y autorización utilizando Spring Security y JSON Web Tokens (JWT).
+*   **Persistencia de Datos:** Uso de Spring Data JPA para la interacción con la base de datos.
 
-```bash
-# Rebuild the devcontainer from the VS Code command palette: "Remote-Containers: Rebuild Container"
-# OR from the terminal (if you use the devcontainer CLI):
-devcontainer build --workspace-folder . --workspace-mount-workspace true
-```
+---
 
-For manual local testing/builds, set JAVA_HOME to your JDK 21 installation (or use the included wrapper and SDKMAN):
+## Cómo Empezar
 
-```bash
-export JAVA_HOME=/usr/local/sdkman/candidates/java/21.0.9-tem
-export PATH="$JAVA_HOME/bin:$PATH"
-./mvnw -v
-./mvnw clean test
-```
+Sigue estas instrucciones para levantar el entorno de desarrollo y ejecutar la aplicación.
 
-## Git SSH vs HTTPS (evitar solicitar usuario/contraseña)
+### Requisitos Previos
 
-Si tu entorno te pide `username/password` al intentar push/commit, probablemente el `remote.origin.url` está configurado usando HTTPS en lugar de SSH.
+*   [Visual Studio Code](https://code.visualstudio.com/)
+*   [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+*   La extensión [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) para VS Code.
 
-Verifica el remote:
+### Inicio Rápido con Dev Container
 
-```bash
-git remote -v
-# si muestra https://... cambia a SSH con:
-git remote set-url origin git@github.com:protafolio-dpichinil/backend-spring-boot.git
-```
+Este proyecto está configurado para usar Dev Containers, lo que simplifica la configuración del entorno de desarrollo.
 
-Si no tienes una clave SSH en este entorno crea una nueva y añádela a tu cuenta GitHub:
+1.  **Clona el repositorio** en tu máquina local.
+2.  **Abre la carpeta del proyecto** con Visual Studio Code.
+3.  VS Code detectará la configuración del Dev Container y te mostrará una notificación. Haz clic en **"Reopen in Container"**.
+4.  Espera a que VS Code construya y configure el contenedor. El comando `postCreateCommand` en `devcontainer.json` se encargará de instalar las dependencias de Maven automáticamente.
+
+### Ejecutar la Aplicación
+
+Una vez que el contenedor esté en ejecución y las dependencias se hayan descargado, puedes arrancar la aplicación Spring Boot. Abre una nueva terminal dentro de VS Code (`Terminal > New Terminal`) y ejecuta:
 
 ```bash
-# genero un par ed25519 (sin passphrase en el contenedor)
-ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -C "you@example.com"
-# imprime la pública para copiar y añadir en https://github.com/settings/keys
-cat ~/.ssh/id_ed25519.pub
-# añade la clave al agente (opcional)
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_ed25519
-# probar conexión
-ssh -T git@github.com
+./mvnw spring-boot:run
 ```
 
-He incluido un pequeño script para automatizar esto en el contenedor: `scripts/generate-ssh-key-and-test.sh`
+La aplicación estará disponible en `http://localhost:8080`.
+
+### Visualización de Endpoints con OpenAPI (Swagger UI)
+
+El proyecto incluye `springdoc-openapi` para generar documentación interactiva de la API. Una vez que la aplicación esté en marcha, puedes acceder a la interfaz de Swagger UI en tu navegador:
+
+*   **URL de Swagger UI:** http://localhost:8080/swagger-ui.html
+
+### Ejecutar Pruebas y Cobertura de Código
+
+El proyecto está configurado con JaCoCo para medir la cobertura de los tests unitarios.
+
+1.  Para ejecutar los tests y generar el informe de cobertura, utiliza el siguiente comando de Maven:
+    ```bash
+    ./mvnw clean verify
+    ```
+2.  Una vez finalizado, el informe de cobertura se encontrará en la siguiente ruta: `target/site/jacoco/index.html`. Puedes abrir este archivo en tu navegador para ver el detalle de la cobertura de código.
+
+3.  **(Opcional) Visualizar el informe en un servidor local:** Si estás dentro del Dev Container, puede ser más cómodo levantar un servidor local para ver el informe. Ejecuta el siguiente comando:
+    ```bash
+    npx serve target/site/jacoco
+    ```
+    Esto iniciará un servidor web. Visual Studio Code detectará el puerto y te ofrecerá un botón para **"Abrir en el navegador"**. Por defecto, podrás acceder al informe en una URL como `http://localhost:3000`.

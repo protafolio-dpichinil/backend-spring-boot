@@ -1,5 +1,19 @@
-{"properties": [{
-  "name": "spring.h2.console.enabled",
-  "type": "java.lang.String",
-  "description": "A description for 'spring.h2.console.enabled'"
-}]}
+{
+  "properties": [
+    {
+      "name": "spring.h2.console.enabled",
+      "type": "java.lang.String",
+      "description": "A description for 'spring.h2.console.enabled'"
+    },
+    {
+      "name": "application.security.jwt.expiration",
+      "type": "java.lang.String",
+      "description": "A description for 'application.security.jwt.expiration'"
+    },
+    {
+      "name": "application.security.jwt.secret-key",
+      "type": "java.lang.String",
+      "description": "A description for 'application.security.jwt.secret-key'"
+    }
+  ]
+}

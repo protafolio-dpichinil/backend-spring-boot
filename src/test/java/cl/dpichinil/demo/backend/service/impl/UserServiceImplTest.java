@@ -1,6 +1,7 @@
 package cl.dpichinil.demo.backend.service.impl;
 
 import cl.dpichinil.demo.backend.config.exception.CustomException;
+import cl.dpichinil.demo.backend.config.security.JwtProvider;
 import cl.dpichinil.demo.backend.dto.ResponseDto;
 import cl.dpichinil.demo.backend.dto.ResponsePageDto;
 import cl.dpichinil.demo.backend.dto.UserDto;
@@ -36,6 +37,8 @@ class UserServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    JwtProvider jwtProvider;
 
     private UserServiceImpl service;
 
@@ -44,7 +47,7 @@ class UserServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        service = new UserServiceImpl(userRepository, passwordEncoder);
+        service = new UserServiceImpl(userRepository, passwordEncoder, jwtProvider);
     }
 
     private UserEntity sampleEntity(int id, String username) {
