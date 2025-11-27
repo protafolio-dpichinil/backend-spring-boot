@@ -1,6 +1,5 @@
 package cl.dpichinil.demo.backend.config.exception;
 
-import cl.dpichinil.demo.backend.config.exception.CustomException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.http.HttpStatus;

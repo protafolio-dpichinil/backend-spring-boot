@@ -50,13 +50,15 @@
 		"vscode": {
 			// Añade IDs de extensiones aquí. Se instalarán y activarán automáticamente en el dev container.
 			"extensions": [
-				"vscjava.vscode-java-pack",
-				"vmware.vscode-spring-boot",
-				"redhat.java",
-				"Google.gemini-code-assist",
-				"vmware.vscode-boot-dev-pack",
-				"github.copilot-chat",
-				"vscjava.vscode-java-test"
+				"vscjava.vscode-java-pack", // Java Extension Pack
+				"vmware.vscode-spring-boot", // Spring Boot Extension Pack
+				"redhat.java", // Red Hat Java Extension Pack
+				"pivotal.vscode-spring-boot-dashboard", // Spring Boot Dashboard
+				//"Google.gemini-code-assist", // Gemini Code Assist
+				"vmware.vscode-boot-dev-pack", // Spring Boot Dev Pack
+				"github.copilot-chat", // GitHub Copilot Chat
+				"vscjava.vscode-java-test", // Java Test Runner
+				"google.geminicodeassist" //Gemini Code Assist
 			]
 		}
 	},
