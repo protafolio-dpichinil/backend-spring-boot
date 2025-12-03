@@ -1,6 +1,7 @@
 package cl.dpichinil.demo.backend.config.exception;
 
 import cl.dpichinil.demo.backend.dto.ResponseDto;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +33,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.warn("Handled CustomException: {}", ex.getMessage());
         ResponseDto body = new ResponseDto(Boolean.FALSE, ex.getMessage());
         return new ResponseEntity<>(body, status);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ResponseDto> handleBadCredentialsException(BadCredentialsException ex) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        log.warn("Handled BadCredentialsException: {}", ex.getMessage());
+        ResponseDto body = new ResponseDto(Boolean.FALSE, ex.getMessage());
+        return new ResponseEntity<>(body, status);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex,
+                                                                   HttpHeaders headers,
+                                                                   HttpStatusCode status,
+                                                                   WebRequest request) {
+        log.warn("Handled NoHandlerFoundException: {}", ex.getRequestURL());
+        ResponseDto body = new ResponseDto(Boolean.FALSE, "El recurso solicitado no fue encontrado.");
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
     @Override
@@ -61,5 +82,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ResponseDto body = new ResponseDto(Boolean.FALSE, "Internal server error");
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    
 
 }

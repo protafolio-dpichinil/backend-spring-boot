@@ -3,6 +3,7 @@ package cl.dpichinil.demo.backend.config.security;
 import java.io.IOException;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -44,19 +45,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             
             Optional<UserEntity> op = userRepository.findByUsername(username);
             if(op.isPresent()){
-                if (jwtpProvider.isTokenValid(jwt, username)) {
+                if(jwtpProvider.isTokenValid(jwt, username)){
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            username,
-                            null,
-                            functionUtil.mapRolesToAuthorities()
+                        username,
+                        null,
+                        functionUtil.mapRolesToAuthorities()
                     );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     // Actualizar el contexto de seguridad
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);    
+                } else {
+                    functionUtil.writeErrorResponse(HttpStatus.UNAUTHORIZED, "Token JWT inválido o expirado", response);
                 }
-            } 
-            
+            } else {
+                functionUtil.writeErrorResponse(HttpStatus.UNAUTHORIZED, "Token JWT inválido", response);
+            }
         }
         filterChain.doFilter(request, response);
     }
