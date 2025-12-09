@@ -5,7 +5,7 @@ public class ConstantUtil {
     public static final String BEARER_PREFIX = "Bearer ";
 
     
-    public static final String PATH_LOGIN = "/api/auth/login";
+    public static final String PATH_LOGIN = "/api/v1/auth/login";
     
 
     public static final String AUTORIZED_REQUEST_LOGIN = PATH_LOGIN + "**";

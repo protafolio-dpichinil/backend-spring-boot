@@ -6,13 +6,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import cl.dpichinil.demo.backend.controller.openapi.AuthOpenApi;
 import cl.dpichinil.demo.backend.dto.ResponseDto;
 import cl.dpichinil.demo.backend.dto.UserDto;
 import cl.dpichinil.demo.backend.service.UserService;
 
 @RestController
-@RequestMapping("/api/auth")
-public class AuthController {
+@RequestMapping("/api/v1/auth")
+public class AuthController implements AuthOpenApi {
     
 
     private final UserService userService;
@@ -23,7 +24,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDto> authenticateUser(@RequestBody UserDto userDto){
+    public ResponseEntity<ResponseDto> login(@RequestBody UserDto userDto){
         return userService.login(userDto);
     }
 }

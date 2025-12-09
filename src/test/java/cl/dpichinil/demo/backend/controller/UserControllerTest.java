@@ -87,7 +87,7 @@ class UserControllerTest {
         UserDto dto = new UserDto();
         dto.setUsername("updated");
 
-        when(userService.update(eq(1), any(UserDto.class))).thenReturn(ResponseEntity.ok(new ResponseDto(true, "updated", dto)));
+        when(userService.updateUserDto(eq(1), any(UserDto.class))).thenReturn(ResponseEntity.ok(new ResponseDto(true, "updated", dto)));
 
         mockMvc.perform(put("/users/1")
                 .contentType("application/json")
@@ -102,7 +102,7 @@ class UserControllerTest {
         UserDto dto = new UserDto();
         dto.setPassword("new-pass");
 
-        when(userService.resetPassword(eq(1), any(UserDto.class))).thenReturn(ResponseEntity.ok(new ResponseDto(true, "password reset", null)));
+        when(userService.changePassword(eq(1), any(UserDto.class))).thenReturn(ResponseEntity.ok(new ResponseDto(true, "password reset", null)));
 
         mockMvc.perform(patch("/users/1/password")
                 .contentType("application/json")

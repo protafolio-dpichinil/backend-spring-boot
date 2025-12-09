@@ -156,7 +156,7 @@ class UserServiceImplTest {
     @Test
     void update_invalidId_throwsBadRequest() {
         UserDto dto = sampleDto("u1");
-        CustomException ex = assertThrows(CustomException.class, () -> service.update(null, dto));
+        CustomException ex = assertThrows(CustomException.class, () -> service.updateUserDto(null, dto));
         assertThat(ex.status).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -164,7 +164,7 @@ class UserServiceImplTest {
     void update_notFound_throwsNotFound() {
         when(userRepository.findById(2)).thenReturn(Optional.empty());
         UserDto dto = sampleDto("u1");
-        CustomException ex = assertThrows(CustomException.class, () -> service.update(2, dto));
+        CustomException ex = assertThrows(CustomException.class, () -> service.updateUserDto(2, dto));
         assertThat(ex.status).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
@@ -177,7 +177,7 @@ class UserServiceImplTest {
         dto.setPassword("new-pass");
         dto.setActive(false);
 
-        ResponseEntity<ResponseDto> res = service.update(2, dto);
+        ResponseEntity<ResponseDto> res = service.updateUserDto(2, dto);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
         verify(userRepository).save(entityCaptor.capture());
         assertThat(entityCaptor.getValue().getUsername()).isEqualTo("new");
@@ -201,7 +201,7 @@ class UserServiceImplTest {
     void resetPassword_missingPassword_throwsBadRequest() {
         when(userRepository.findById(5)).thenReturn(Optional.of(sampleEntity(5, "u5")));
         UserDto dto = new UserDto(); // no password
-        CustomException ex = assertThrows(CustomException.class, () -> service.resetPassword(5, dto));
+        CustomException ex = assertThrows(CustomException.class, () -> service.changePassword(5, dto));
         assertThat(ex.status).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -212,7 +212,7 @@ class UserServiceImplTest {
         UserDto dto = new UserDto();
         dto.setPassword("new-p");
 
-        ResponseEntity<ResponseDto> res = service.resetPassword(6, dto);
+        ResponseEntity<ResponseDto> res = service.changePassword(6, dto);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
         verify(userRepository).save(entityCaptor.capture());
         assertThat(entityCaptor.getValue().getPassword()).isEqualTo("new-p");

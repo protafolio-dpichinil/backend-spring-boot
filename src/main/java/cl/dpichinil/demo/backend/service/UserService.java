@@ -28,6 +28,13 @@ public interface UserService {
     ResponseEntity<ResponseDto> getById(Integer id);
 
     /**
+     * Get user by username.
+     * @param username
+     * @return
+     */
+    ResponseEntity<ResponseDto> getByUsername(String username);
+
+    /**
      * Save a new user.
      * @param userDto
      * @return
@@ -40,7 +47,7 @@ public interface UserService {
      * @param userDto
      * @return
      */
-    ResponseEntity<ResponseDto> update(Integer id, UserDto userDto);
+    ResponseEntity<ResponseDto> updateUserDto(Integer id, UserDto userDto);
 
     /**
      * Delete a user by ID.
@@ -55,14 +62,7 @@ public interface UserService {
      * @param userDto
      * @return
      */
-    ResponseEntity<ResponseDto> resetPassword(Integer id, UserDto userDto);
-
-    /**
-     * Get user by username.
-     * @param username
-     * @return
-     */
-    ResponseEntity<ResponseDto> getByUsername(String username);
+    ResponseEntity<ResponseDto> changePassword(Integer id, UserDto userDto);
 
     /**
      * Reset password by username.
@@ -70,7 +70,7 @@ public interface UserService {
      * @return
      */
     ResponseEntity<ResponseDto> resetPassword(UserDto userDto);
-
+    
     /**
      * User login.
      * @param userDto

@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
    
     @Override
     public ResponseEntity<ResponseDto> getById(Integer id) {
+        validateNonNullId(id);
         Optional<UserEntity> op = userRepository.findById(id);
         validateNonEmptyOptional(op);
         UserEntity userEntity = op.get();
@@ -103,7 +104,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<ResponseDto> update(Integer id, UserDto userDto) {
+    public ResponseEntity<ResponseDto> updateUserDto(Integer id, UserDto userDto) {
         validateUpdateFields(id, userDto);
         Optional<UserEntity> op = userRepository.findById(id);
         validateNonEmptyOptional(op);
@@ -117,6 +118,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<ResponseDto> delete(Integer id) {
+        validateNonNullId(id);
         Optional<UserEntity> op = userRepository.findById(id);
         validateNonEmptyOptional(op);
         userRepository.deleteById(id);
@@ -124,56 +126,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<ResponseDto> resetPassword(Integer id, UserDto userDto) {
+    public ResponseEntity<ResponseDto> changePassword(Integer id, UserDto userDto) {
+        validateNonNullId(id);
+        validateNonEmptyPassword(userDto.getPassword());
         Optional<UserEntity> op = userRepository.findById(id);
         validateNonEmptyOptional(op);
-        validateNonEmptyPassword(userDto.getPassword());
         UserEntity userEntity = op.get();
         userEntity.setPassword(userDto.getPassword());
         userRepository.save(userEntity);
         return ResponseEntity.ok(new ResponseDto(true, "Password updated successfully"));
-    }
-
-    private void validateNonEmptyPassword(String password) {
-        if(password == null || password.isEmpty()) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "Password is required");
-        }
-    }
-
-    private void validateNonEmptyOptional(Optional<UserEntity> op) {
-        if(op.isEmpty()) {
-            throw new CustomException(HttpStatus.NOT_FOUND, "User not found");
-        }
-    }
-
-    private void validateNotEmptyUserDto(UserDto userDto) {
-        if(userDto == null) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "Invalid user data");
-        }
-        if(userDto.getActive() == null) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "Active status is required");
-        }
-        validateNonEmptyPassword(userDto.getPassword());
-        validateNonEmptyUsername(userDto.getUsername());
-    }
-
-    private void validateNonEmptyUsername(String username) {
-        if(username == null || username.isEmpty()) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "Username is required");
-        }
-    }
-
-    private void validateUpdateFields(Integer id, UserDto userDto) {
-        if(id == null) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "Invalid user ID");
-        }
-        validateNotEmptyUserDto(userDto);
-    }
-
-    private void validateNonEmptyListUserEntities(List<UserEntity> userEntities) {
-        if(userEntities.isEmpty()) {
-            throw new CustomException(HttpStatus.NOT_FOUND, "No users found");
-        }
     }
 
     @Override
@@ -193,6 +154,63 @@ public class UserServiceImpl implements UserService {
         ResponseDto responseDto = new ResponseDto(true, "Password para el usuario '" + user.getUsername() + "' ha sido reseteada y la información impresa en consola.");
         return ResponseEntity.ok(responseDto);
     }
+
+    private void validateNonEmptyPassword(String password) {
+        if(password == null || password.isEmpty()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Password is required");
+        }
+    }
+
+    private void validateNonEmptyOptional(Optional<UserEntity> op) {
+        if(op.isEmpty()) {
+            throw new CustomException(HttpStatus.NOT_FOUND, "User not found");
+        }
+    }
+
+    private void validateNotEmptyUserDto(UserDto userDto) {
+        validateNonNullUserDto(userDto);
+        validateNonNullId(userDto.getId());
+        validateNonEmptyUsername(userDto.getUsername());
+        validateNonEmptyPassword(userDto.getPassword());
+        validateNonEmpyActive(userDto.getActive());
+    }
+
+    private void validateNonNullUserDto(UserDto user) {
+        if(user == null) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Invalid user data");
+        }
+    }
+
+    private void validateNonEmpyActive(Boolean active) {
+        if(active == null) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Active status is required");
+        }
+    }
+
+    private void validateNonEmptyUsername(String username) {
+        if(username == null || username.isEmpty()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Username is required");
+        }
+    }
+
+    private void validateUpdateFields(Integer id, UserDto userDto) {
+        validateNonNullId(id);
+        validateNotEmptyUserDto(userDto);
+    }
+    
+    private void validateNonNullId(Integer id) {
+        if(id == null) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Invalid user ID");
+        }
+    }
+
+    private void validateNonEmptyListUserEntities(List<UserEntity> userEntities) {
+        if(userEntities.isEmpty()) {
+            throw new CustomException(HttpStatus.NOT_FOUND, "No users found");
+        }
+    }
+
+    
 
     @Override
     public ResponseEntity<ResponseDto> login(UserDto userDto) {
