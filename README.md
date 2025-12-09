@@ -1,4 +1,4 @@
-# backend-spring-boot
+# Backend Spring Boot
 
 Este es un proyecto backend desarrollado con Spring Boot y Java 21, diseñado para demostrar mis conocimientos y experiencia en el desarrollo de aplicaciones Java modernas.
 
@@ -7,9 +7,57 @@ El objetivo principal es aplicar y exhibir buenas prácticas en la construcción
 *   **Seguridad:** Implementación de autenticación y autorización utilizando Spring Security y JSON Web Tokens (JWT).
 *   **Persistencia de Datos:** Uso de Spring Data JPA para la interacción con la base de datos.
 
+## Tecnologías Utilizadas
+
+A continuación se presenta una tabla con las principales tecnologías, frameworks y herramientas utilizadas en este proyecto.
+
+| Categoría          | Tecnología / Herramienta | Versión    | Rol en el Proyecto|
+|--------------------|--------------------------|------------|-------------------|
+| Lenguaje           | Java                     | 21         | Uso de java 21 para el desarrolo del proyecto |
+| Framework          | Spring Boot              | 3.2.5      | Configuración, autoconfiguración y ejecución rápida de la aplicación |
+| Persistencia       | Spring Data JPA / H2     | -          | Gestion de capa de acceso a datos y mapeo de objetos relacionales |
+| Seguridad          | Spring Security / JWT    | -          | Implementacion de seguridad de la api con JWT |
+| Documentación API  | Springdoc OpenAPI        | 2.5.0      |         |
+| Build              | Maven                    | -          | Gestion de dependencias del proyecto |
+| Contenerización    | Docker (Dev Containers)  | -          | Conterizacion de aplicacion |
+| Testing            | Junit 5 Jupiter          | -          | Pruebas unitarias y de integracion |
 ---
 
-## Cómo Empezar
+
+## Arquitectura de Tres Capas Implementada
+El diseño del proyecto asegura una clara separación de responsabilidades, lo que facilita el mantenimiento, la escalabilidad y las pruebas:
+
+### Capa de Presentación / Controlador (@RestController):
+
+- Maneja las peticiones HTTP (GET, POST, PUT, DELETE).
+
+- Convierte los datos JSON de entrada/salida a/desde objetos de la Capa de Servicio.
+
+### Capa de Servicio (@Service):
+
+- Contiene la lógica de negocio principal.
+
+- Actúa como intermediario, orquestando las transacciones y la manipulación de datos.
+
+### Capa de Datos / Repositorio (@Repository - JPA):
+
+- Interactúa directamente con la base de datos (mediante Spring Data JPA).
+
+- Define las operaciones CRUD y consultas personalizadas.
+
+## Habilidades Demostradas
+- Dominio en la configuración y uso de Spring Boot 3.
+
+- Capacidad para desarrollar código limpio y moderno con Java 21.
+
+- Aplicación práctica de la Arquitectura de Tres Capas para una alta mantenibilidad.
+
+- Implementación de persistencia de datos eficiente con JPA/Hibernate.
+
+- Compromiso con la calidad del código mediante pruebas unitarias y de integración usando JUnit 5.
+
+
+# Cómo Empezar
 
 Sigue estas instrucciones para levantar el entorno de desarrollo y ejecutar la aplicación.
 
