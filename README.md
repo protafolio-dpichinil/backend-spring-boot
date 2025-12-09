@@ -90,7 +90,7 @@ La aplicación estará disponible en `http://localhost:8080`.
 
 El proyecto incluye `springdoc-openapi` para generar documentación interactiva de la API. Una vez que la aplicación esté en marcha, puedes acceder a la interfaz de Swagger UI en tu navegador:
 
-*   **URL de Swagger UI:** http://localhost:8080/swagger-ui.html
+*   **URL de Swagger UI:** http://localhost:8080/swagger-ui/index.html
 
 ### Ejecutar Pruebas y Cobertura de Código
 
